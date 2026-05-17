@@ -38,3 +38,4 @@ def test_buscar_cep_inexistente(mock_get):
     sucesso, resultado = buscar_endereco_cep("99999999")
     assert sucesso is False
     assert resultado == "CEP não encontrado."
+    # Forçando atualização do teste
