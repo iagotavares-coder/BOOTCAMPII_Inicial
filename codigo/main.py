@@ -4,11 +4,15 @@ __version__ = "1.1.0"
 
 
 def adicionar_medicamento(lista, nome, horario, dosagem):
-    if not nome or not horario:
-        return False, "Nome e horário são obrigatórios."
-    medicamento = {"nome": nome, "horario": horario, "dosagem": dosagem}
-    lista.append(medicamento)
-    return True, "Medicamento adicionado com sucesso!"
+    cep = input("Digite o CEP do local de entrega: ")
+sucesso, resultado = buscar_endereco_cep(cep)
+
+if sucesso:
+    endereco_final = resultado
+    print(f"Endereço localizado: {endereco_final}")
+else:
+    endereco_final = "Endereço não informado"
+    print(f"Aviso: {resultado}. Usando endereço padrão.")
 
 
 def listar_medicamentos(lista):
@@ -23,9 +27,25 @@ def listar_medicamentos(lista):
 
 
 def buscar_endereco_cep(cep):
-    cep_limpo = cep.replace("-", "").replace(" ", "")
-    if len(cep_limpo) != 8 or not cep_limpo.isdigit():
-        return False, "CEP inválido. Deve conter 8 dígitos."
+    # Remove hífens ou espaços caso o usuário digite
+    cep = str(cep).replace("-", "").strip()
+    
+    if len(cep) != 8 or not cep.isdigit():
+        return False, "CEP inválido"
+        
+    try:
+        response = requests.get(f"https://viacep.com.br/ws/{cep}/json/")
+        if response.status_code == 200:
+            dados = response.json()
+            if "erro" in dados:
+                return False, "CEP não encontrado"
+            
+            endereco = f"{dados.get('logradouro', '')}, {dados.get('bairro', '')} - {dados.get('localidade', '')}/{dados.get('uf', '')}"
+            return True, endereco
+        else:
+            return False, "Erro ao acessar a API"
+    except Exception:
+        return False, "Erro de conexão"
 
     url = f"https://viacep.com.br/ws/{cep_limpo}/json/"
     try:
