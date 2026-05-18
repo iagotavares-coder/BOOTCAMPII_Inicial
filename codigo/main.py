@@ -28,7 +28,6 @@ def listar_medicamentos(lista):
 
 
 def buscar_endereco_cep(cep):
-    # Limpa e valida o formato do CEP
     cep_limpo = str(cep).replace("-", "").replace(" ", "").strip()
     
     if len(cep_limpo) != 8 or not cep_limpo.isdigit():
@@ -42,7 +41,6 @@ def buscar_endereco_cep(cep):
             if "erro" in dados:
                 return False, "CEP não encontrado."
             
-            # Monta a string de endereço que o teste do professor vai validar
             endereco = f"{dados.get('logradouro', '')}, {dados.get('bairro', '')} - {dados.get('localidade', '')}/{dados.get('uf', '')}"
             return True, endereco
         else:
